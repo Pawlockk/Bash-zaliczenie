@@ -39,3 +39,9 @@ read pokaz
 if (($pokaz=='Y')) ; then
   echo dupa
 fi
+
+echo 'Podaj folder z którego przenieść pliki (ścieżka do folderu):'
+read folder1
+echo 'Podaj folder do którego przenieść pliki (ścieżka do folderu):'
+read folder2
+mv $folder1/* $folder2/
