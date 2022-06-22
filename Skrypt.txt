@@ -8,3 +8,34 @@ if [ -e $folder/$plik ] ; then
 else
 	echo 'Plik $plik nie istnieje'
 fi
+
+echo 'Podaj ilość użytkowników:'
+read numer
+groupadd studenci_informatyki
+groupadd studenci_etyki
+for (( x=1; $x <= $numer; x++ )) ; do
+
+	useradd -p password$x user$x
+  if [id -u user$x >/dev/null 2>&1]; then
+    echo user$x utworzono
+  fi
+
+
+  if (($x <= $numer/2)) ; then
+    grupa=studenci_informatyki
+  else 
+    grupa=studenci_etyki
+  fi
+
+  
+	usermod -G $grupa user$x
+  if [id -nG user$x | grep -qw $grupa]; then
+    echo user$x dodano do grupy $grupa
+  fi
+
+done
+echo 'Chcesz wyświetlić konta, grupy oraz ich zawartość? Y - tak'
+read pokaz
+if (($pokaz=='Y')) ; then
+  echo dupa
+fi
