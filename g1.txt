@@ -1,0 +1,10 @@
+echo 'Podaj folder (ścieżka do folderu):'
+read folder
+echo 'Podaj nazwę pliku (z rozszerzeniem):'
+read plik
+if [ -e $folder/$plik ] ; then
+	echo 'Plik $plik istnieje'
+	cat $folder/$plik
+else
+	echo 'Plik $plik nie istnieje'
+fi

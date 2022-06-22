@@ -1,52 +1,78 @@
-echo 'Podaj folder (ścieżka do folderu):'
-read folder
-echo 'Podaj nazwę pliku (z rozszerzeniem):'
-read plik
-if [ -e $folder/$plik ] ; then
-	echo 'Plik $plik istnieje'
-	cat $plik
-else
-	echo 'Plik $plik nie istnieje'
-fi
+echo 'Które zadanie? 1/2/3/4:'
+read zadanie
+case $zadanie in
 
-echo 'Podaj ilość użytkowników:'
-read numer
-groupadd studenci_informatyki
-groupadd studenci_etyki
-for (( x=1; $x <= $numer; x++ )) ; do
+	1)
+	echo 'Podaj folder (ścieżka do folderu):'
+	read folder
+	echo 'Podaj nazwę pliku (z rozszerzeniem):'
+	read plik
+	if [ -e $folder/$plik ] ; then
+		echo 'Plik $plik istnieje'
+		cat $folder/$plik
+	else
+		echo 'Plik $plik nie istnieje'
+	fi
+	;;
 
-	useradd -p password$x user$x
-  if [id -u user$x >/dev/null 2>&1]; then
-    echo user$x utworzono
-  fi
+	2)
+	echo 'Podaj ilość użytkowników:'
+	read numer
+	groupadd studenci_informatyki
+	groupadd studenci_etyki
+	for (( x=1; $x <= $numer; x++ )) ; do
+
+		useradd -p password$x user$x
+  		if [id -u user$x >/dev/null 2>&1]; then
+    			echo user$x utworzono
+  		fi
 
 
-  if (($x <= $numer/2)) ; then
-    grupa=studenci_informatyki
-  else 
-    grupa=studenci_etyki
-  fi
+  		if (($x <= $numer/2)) ; then
+    			grupa=studenci_informatyki
+  		else 
+    			grupa=studenci_etyki
+  		fi
 
   
-	usermod -G $grupa user$x
-  if [id -nG user$x | grep -qw $grupa]; then
-    echo user$x dodano do grupy $grupa
-  fi
+		usermod -G $grupa user$x
+  		if [id -nG user$x | grep -qw $grupa]; then
+    			echo user$x dodano do grupy $grupa
+  		fi
 
-done
-echo 'Chcesz wyświetlić konta, grupy oraz ich zawartość? Y - tak'
-read pokaz
-if (($pokaz=='Y')) ; then
-  echo dupa
-fi
+	done
+	echo 'Chcesz wyświetlić konta, grupy oraz ich zawartość? Y - tak'
+	read pokaz
+	if (($pokaz=='Y')) ; then
+		echo 'konta:'
+  		cut -d: -f1 /etc/passwd
+		echo 'grupy:'
+		id -nG
+	fi
+	;;
 
-echo 'Podaj folder z którego przenieść pliki (ścieżka do folderu):'
-read folder1
-echo 'Podaj folder do którego przenieść pliki (ścieżka do folderu):'
-read folder2
-mv $folder1/* $folder2/
+	3)
+	echo 'Podaj folder z którego przenieść pliki (ścieżka do folderu):'
+	read folder1
+	echo 'Podaj folder do którego przenieść pliki (ścieżka do folderu):'
+	read folder2
+	licznik=0
+	for file in $folder1/*; do
+		if(wzorzec) ; then
+			((licznik++))
+			mv $file $folder2/
+		fi
+	done
+	echo Przeniesiono $licznik plików
+	;;
 
-echo 'Nr_gracza Imie_i_Nazwisko Klub Ilosc_pkt' > baza.txt
-echo '23 MichaelJordan ChicagoBulls 31' >> baza.txt
-echo '32 MagicJohnson LosAngelesLakers 30' >> baza.txt
-echo '33 LarryBird BostonCeltics 32' >> baza.txt
+	4)
+	echo 'Nr_gracza Imie_i_Nazwisko Klub Ilosc_pkt' > baza.txt
+	echo '23 MichaelJordan ChicagoBulls 31' >> baza.txt
+	echo '32 MagicJohnson LosAngelesLakers 30' >> baza.txt
+	echo '33 LarryBird BostonCeltics 32' >> baza.txt
+	;;
+
+	*)
+	echo 'Błędny numer zadania'
+	;;

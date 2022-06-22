@@ -1,0 +1,12 @@
+echo 'Podaj folder z którego przenieść pliki (ścieżka do folderu):'
+read folder1
+echo 'Podaj folder do którego przenieść pliki (ścieżka do folderu):'
+read folder2
+licznik=0
+for file in $folder1/*; do
+	if(wzorzec) ; then
+		((licznik++))
+		mv $file $folder2/
+	fi
+done
+echo Przeniesiono $licznik plików
