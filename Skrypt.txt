@@ -45,3 +45,8 @@ read folder1
 echo 'Podaj folder do którego przenieść pliki (ścieżka do folderu):'
 read folder2
 mv $folder1/* $folder2/
+
+echo 'Nr_gracza Imie_i_Nazwisko Klub Ilosc_pkt' > baza.txt
+echo '23 MichaelJordan ChicagoBulls 31' >> baza.txt
+echo '32 MagicJohnson LosAngelesLakers 30' >> baza.txt
+echo '33 LarryBird BostonCeltics 32' >> baza.txt
