@@ -1,78 +1,138 @@
+!#/bin/bash
+
 echo 'Które zadanie? 1/2/3/4:'
 read zadanie
 case $zadanie in
 
 	1)
-	echo 'Podaj folder (ścieżka do folderu):'
-	read folder
-	echo 'Podaj nazwę pliku (z rozszerzeniem):'
-	read plik
-	if [ -e $folder/$plik ] ; then
-		echo 'Plik $plik istnieje'
-		cat $folder/$plik
-	else
-		echo 'Plik $plik nie istnieje'
+echo 'Podaj folder (ścieżka do folderu):'
+read folder
+echo 'Podaj nazwę pliku :'
+read plik
+if [ -e $folder/$plik ] ; then
+	echo 'Plik '$plik' istnieje'
+	cat $folder/$plik
+else
+	echo 'Plik '$plik' nie istnieje'
+fi
+;;
+
+2)
+echo 'Podaj ilość użytkowników:'
+read numer
+groupadd studenci_informatyki
+groupadd studenci_etyki
+for (( x=1; $x <= $numer; x++ )) ; do
+
+	useradd -p password$x user$x
+	if [ id -u user$x >/dev/null 2>&1 ]; then
+			echo user$x utworzono
 	fi
-	;;
-
-	2)
-	echo 'Podaj ilość użytkowników:'
-	read numer
-	groupadd studenci_informatyki
-	groupadd studenci_etyki
-	for (( x=1; $x <= $numer; x++ )) ; do
-
-		useradd -p password$x user$x
-  		if [id -u user$x >/dev/null 2>&1]; then
-    			echo user$x utworzono
-  		fi
 
 
-  		if (($x <= $numer/2)) ; then
-    			grupa=studenci_informatyki
-  		else 
-    			grupa=studenci_etyki
-  		fi
-
-  
-		usermod -G $grupa user$x
-  		if [id -nG user$x | grep -qw $grupa]; then
-    			echo user$x dodano do grupy $grupa
-  		fi
-
-	done
-	echo 'Chcesz wyświetlić konta, grupy oraz ich zawartość? Y - tak'
-	read pokaz
-	if (($pokaz=='Y')) ; then
-		echo 'konta:'
-  		cut -d: -f1 /etc/passwd
-		echo 'grupy:'
-		id -nG
+	if (( $x <= $numer/2 )) ; then
+			grupa=studenci_informatyki
+	else 
+			grupa=studenci_etyki
 	fi
-	;;
 
-	3)
-	echo 'Podaj folder z którego przenieść pliki (ścieżka do folderu):'
-	read folder1
-	echo 'Podaj folder do którego przenieść pliki (ścieżka do folderu):'
-	read folder2
-	licznik=0
-	for file in $folder1/*; do
-		if(wzorzec) ; then
-			((licznik++))
-			mv $file $folder2/
-		fi
+
+	usermod -G $grupa user$x
+	if id -nG user$x | grep -qw $grupa ; then
+			echo user$x dodano do grupy $grupa
+	fi
+
+done
+echo 'Chcesz wyświetlić konta, grupy oraz ich zawartość? Y - tak'
+read pokaz
+if [ $pokaz == "Y" ] ; then
+	echo 'konta:'
+	cut -d: -f1 /etc/passwd
+	echo 'grupy:'
+	for group in id -nG; do
+		echo grupa $group :
+		awk -F':' "/"$group"/{print $"4"}" /etc/group
 	done
-	echo Przeniesiono $licznik plików
-	;;
+fi
+;;
 
-	4)
-	echo 'Nr_gracza Imie_i_Nazwisko Klub Ilosc_pkt' > baza.txt
-	echo '23 MichaelJordan ChicagoBulls 31' >> baza.txt
-	echo '32 MagicJohnson LosAngelesLakers 30' >> baza.txt
-	echo '33 LarryBird BostonCeltics 32' >> baza.txt
-	;;
+3)
+echo 'Podaj folder z którego przenieść pliki (ścieżka do folderu):'
+read folder1
+echo 'Podaj folder do którego przenieść pliki (ścieżka do folderu):'
+read folder2
+licznik=0
+for file in $folder1/*; do
+	if [ -f $file ]
+	then
+	if [ "${file: -4}" == ".txt" ] ; then
+		((licznik++))
+		mv $file $folder2/
+	elif [ "${file: -4}" == ".pdf" ] ; then
+		((licznik++))
+		mv $file $folder2/
+	elif [ "${file: -4}" == ".png" ] ; then
+		((licznik++))
+		mv $file $folder2/
+	fi
+	fi
+done
+echo Przeniesiono $licznik plików
+;;
 
-	*)
-	echo 'Błędny numer zadania'
-	;;
+4)
+echo 'Podaj ilość wierszy:'
+read wiersze
+echo 'Chcesz wprowadzić dane? Y - tak'
+read wybor1
+echo 'Nr_gracza Imie_i_Nazwisko Klub Ilosc_pkt' > baza.txt
+if [ $wybor1 == "Y" ] ; then
+	for (( x=1; $x <= $wiersze; x++ )) ; do
+    echo ------------ $x wpis ------------
+		echo 'Numer gracza:'
+		read numer
+		echo 'ImieNazwisko gracza:'
+		read ImieNazwisko
+		echo 'Klub gracza:'
+		read klub
+		echo 'Ilość punktów gracza:'
+		read punkty
+		echo $numer $ImieNazwisko $klub $punkty >> baza.txt
+	done
+fi
+echo 'Chcesz wyświetlić plik? Y - tak'
+read wybor
+if [ $wybor == "Y" ] ; then
+  echo 'Chcesz wyświetlić wszystko? Y - tak'
+  read wybor
+  if [ $wybor == "Y" ] ; then
+	  cat baza.txt
+  else
+    echo 'Przedział wierszy, początek:'
+    read wiersz1
+    echo 'Przedział wierszy, koniec:'
+    read wiersz2
+    echo 'Kolumna 1:'
+    read kolumna1
+    echo 'Kolumna 2:'
+    read kolumna2
+      if (( ($wiersz1 > $wiersze) || ($wiersz2 > $wiersze) )) ; then
+        echo Błędny przedział wierszy!
+      elif (( ($kolumna1 > 4 ) || ($kolumna2 > 4 ))) ; then
+        echo Błędny przedział kolumn!
+      elif [ $wybor1 != "Y" ] ; then
+        echo 'Nie wprowadziłeś danych'
+      else
+        ((wiersz1++))
+        ((wiersz2++))
+        cat baza.txt | sed 1!d | awk "{ print $"$kolumna1", $"$kolumna2" }"
+        cat baza.txt | sed $wiersz1,$wiersz2!d | awk "{ print $"$kolumna1", $"$kolumna2" }"
+      fi
+  fi
+fi
+;;
+
+*)
+echo 'Błędny numer zadania'
+;; 
+esac
